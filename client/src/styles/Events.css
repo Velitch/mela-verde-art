@@ -1,0 +1,83 @@
+/* Container principale della pagina */
+.events-page-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Wrapper del contenuto che scorre */
+.events-content-wrapper {
+    padding-top: 8rem;
+    /* pt-32 */
+    /* pb-80vh garantisce che anche l'ultima card possa raggiungere il centro dello schermo */
+    padding-bottom: 80vh;
+    padding-left: 4rem;
+    /* pl-16 mobile */
+    padding-right: 1.5rem;
+    /* pr-6 */
+    max-width: 72rem;
+    /* max-w-6xl */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Desktop */
+@media (min-width: 768px) {
+    .events-content-wrapper {
+        padding-left: 14rem;
+        /* md:pl-56 (lascia spazio alla timeline) */
+        padding-right: 5rem;
+        /* md:pr-20 */
+    }
+}
+
+/* Header del Diario */
+.events-header {
+    margin-bottom: 5rem;
+    /* mb-20 */
+    position: relative;
+}
+
+.events-title {
+    font-size: 3.75rem;
+    /* text-6xl */
+    font-weight: 900;
+    /* font-black */
+    font-style: italic;
+    text-transform: uppercase;
+    mix-blend-mode: difference;
+    letter-spacing: -0.05em;
+    /* tracking-tighter */
+    line-height: 1;
+}
+
+@media (min-width: 768px) {
+    .events-title {
+        font-size: 8rem;
+        /* text-8xl */
+    }
+}
+
+/* Sottolineatura dinamica del titolo */
+.header-underline {
+    height: 4px;
+    width: 5rem;
+    /* w-20 */
+    margin-top: 1rem;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Container della lista card */
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    /* gap-12 mobile */
+}
+
+@media (min-width: 768px) {
+    .events-list {
+        gap: 4rem;
+        /* md:gap-16 */
+    }
+}

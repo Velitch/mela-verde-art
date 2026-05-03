@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --color-psy-green: #39ff14;
+  --color-psy-purple: #bc13fe;
+  --color-psy-black: #020617;
+  --color-raw-sand: #f4f1ea;
+  --color-raw-leaf: #2d5a27;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(100%) blur(0px);
+  }
+
+  50% {
+    opacity: 0.8;
+    filter: brightness(150%) blur(1px);
+  }
+}
+
+@layer base {
+  :root {
+    --bg-main: #0d0b25;
+    --text-main: #ffffff;
+  }
+
+  /* RESET AGGRESSIVO CONTRO LA STRISCIA */
+  * {
+    border-color: transparent;
+  }
+
+  html,
+  body {
+    @apply m-0 p-0 antialiased;
+    background-color: var(--bg-main) !important;
+    color: var(--text-main);
+    transition: background-color 0.8s ease-in-out, color 0.8s ease-in-out;
+    overflow-x: hidden;
+  }
+
+  /* KILLER DELLA STRISCIA: 
+     Reset assoluto per nav, header e i loro contenitori diretti 
+  */
+  nav,
+  header,
+  [role="navigation"] {
+    border: none !important;
+    border-bottom: 0px solid transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+  }
+
+  #root {
+    @apply min-h-screen w-full m-0 p-0;
+    border: none !important;
+    text-align: left;
+  }
+}
+
+@layer utilities {
+  .bg-main {
+    background-color: var(--bg-main) !important;
+  }
+
+  .bg-main-card {
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px var(--color-psy-green), 0 0 20px var(--color-psy-green);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-psy-green);
+  border-radius: 10px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Rimuove distorsioni di rendering */
+main {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+}

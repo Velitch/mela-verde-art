@@ -1,0 +1,15 @@
+{
+    "name": "mela-verde-art",
+    "private": true,
+    "scripts": {
+        "server": "cd server && node server.js",
+        "client": "cd client && npm run dev",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "lucide-react": "^1.14.0"
+    }
+}

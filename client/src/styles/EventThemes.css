@@ -1,0 +1,249 @@
+/* ============================================================
+   1. STRUTTURA GENERALE (FLUIDA)
+   ============================================================ */
+.event-card-main {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: min-content !important;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: visible !important;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none !important;
+}
+
+@media (min-width: 1024px) {
+    .event-card-main {
+        flex-direction: row !important;
+    }
+}
+
+/* ============================================================
+   2. IMMAGINE (QUADRATA PERFETTA 1:1)
+   ============================================================ */
+.card-img-container {
+    position: relative;
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    flex-shrink: 0 !important;
+    background: #000;
+    overflow: hidden;
+    border-radius: 11px 11px 0 0;
+}
+
+@media (min-width: 1024px) {
+    .card-img-container {
+        width: 260px !important;
+        height: 260px !important;
+        border-radius: 11px 0 0 11px;
+    }
+}
+
+.card-img-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.6s ease;
+}
+
+.event-card-main:hover .card-img-container img {
+    transform: scale(1.08);
+}
+
+/* ============================================================
+   3. CONTENUTO (LATO DESTRO)
+   ============================================================ */
+.card-content-right {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem !important;
+    min-width: 0;
+}
+
+.event-title {
+    margin: 0 0 0.75rem 0 !important;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    line-height: 1.1;
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    color: inherit;
+}
+
+/* ============================================================
+   4. DESCRIZIONE (4 RIGHE)
+   ============================================================ */
+.event-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.7;
+    margin-bottom: 1.5rem !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto !important;
+}
+
+/* ============================================================
+   5. METADATI (ICONE ACCANTO AL TESTO)
+   ============================================================ */
+.card-footer-meta {
+    width: 100%;
+    margin-top: auto !important;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+}
+
+.meta-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    text-align: left !important;
+}
+
+.meta-text {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.4;
+    color: inherit;
+}
+
+.shrink-0 {
+    flex-shrink: 0 !important;
+}
+
+/* ============================================================
+   6. TEMI E HOVER
+   ============================================================ */
+.card-psy {
+    --accent: #39ff14;
+    color: #fff;
+}
+
+.card-nat {
+    --accent: #4a6741;
+    color: #1a2e15;
+    background: #f5f5f0 !important;
+    border-color: rgba(74, 103, 65, 0.3);
+}
+
+/* --- NUOVO TEMA BDSM --- */
+.card-bdsm {
+    --accent: #ff0000;
+    color: #ffffff;
+    background: #050505 !important;
+    /* Nero ancora più profondo */
+    border-color: rgba(255, 0, 0, 0.2);
+}
+
+/* FIX BIANCO SU BIANCO: Forza il colore scuro nelle date della card Natural */
+.card-nat .meta-text.text-white,
+.card-nat .meta-text span.text-white {
+    color: #1a2e15 !important;
+}
+
+/* FIX PER BDSM: Assicura che il bianco sia brillante */
+.card-bdsm .meta-text.text-white,
+.card-bdsm .meta-text span.text-white {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    /* Leggero glow rosso */
+}
+
+.text-accent {
+    color: var(--accent) !important;
+}
+
+.hover-indicator {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+    color: var(--accent);
+}
+
+.event-card-main:hover .hover-indicator {
+    opacity: 1;
+}
+
+.img-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.3;
+    transition: opacity 0.4s ease;
+}
+
+/* Overlay specifico BDSM: Vira leggermente al rosso scuro */
+.overlay-bdsm {
+    background: linear-gradient(45deg, rgba(255, 0, 0, 0.2), transparent);
+}
+
+.event-card-main:hover .img-overlay {
+    opacity: 0.1;
+}
+
+/* Stile per il tag grafico sopra l'immagine */
+.vibe-image-tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px 6px 8px;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: black;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+}
+
+/* Troncamento universale a 3 righe */
+.line-clamp-3 {
+    line-clamp: 3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Stile specifico descrizione */
+.event-description {
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+/* Correzione colore descrizione per card Natural */
+.card-nat .event-description {
+    color: rgba(26, 46, 21, 0.8) !important;
+}
+
+.card-psy .event-description {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Correzione colore descrizione per card BDSM */
+.card-bdsm .event-description {
+    color: rgba(255, 255, 255, 0.85) !important;
+}

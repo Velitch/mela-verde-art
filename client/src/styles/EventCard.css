@@ -1,0 +1,131 @@
+/* ============================================================
+   1. RESET E FLUIDITÀ CARD (FORZATA)
+   ============================================================ */
+.event-card-main {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    /* Rimuove qualsiasi blocco di altezza */
+    height: auto !important;
+    min-height: min-content !important;
+    max-height: none !important;
+
+    overflow: visible !important;
+    /* Non tagliare mai il contenuto */
+    text-decoration: none !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0a0a0a;
+    position: relative;
+}
+
+@media (min-width: 1024px) {
+    .event-card-main {
+        flex-direction: row !important;
+        align-items: stretch !important;
+    }
+}
+
+/* ============================================================
+   2. IMMAGINE (NON DEVE BLOCCARE L'ALTEZZA)
+   ============================================================ */
+.card-img-container {
+    position: relative;
+    width: 100% !important;
+    height: 220px !important;
+    flex-shrink: 0 !important;
+    overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+    .card-img-container {
+        width: 280px !important;
+        height: auto !important;
+        min-height: 100% !important;
+    }
+}
+
+.card-img-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* ============================================================
+   3. CONTENUTO DESTRO (ESPANDIBILE)
+   ============================================================ */
+.card-content-right {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 0 auto !important;
+    /* Non rimpicciolire mai, solo crescere */
+    padding: 1.5rem !important;
+    height: auto !important;
+    min-height: min-content !important;
+    width: 100% !important;
+}
+
+/* Titolo: sempre visibile */
+.event-card-main h3 {
+    font-size: clamp(1.4rem, 5vw, 1.8rem) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.75rem !important;
+    white-space: normal !important;
+}
+
+/* Descrizione: se disturba, togliamo il clamp per ora */
+.line-clamp-2 {
+    display: block !important;
+    /* Rimuove il box flex se necessario */
+    height: auto !important;
+    overflow: visible !important;
+    margin-bottom: 1.5rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+}
+
+/* ============================================================
+   4. METADATI (LOCATION E DATA) - IL FIX FINALE
+   ============================================================ */
+.card-content-right .text-meta {
+    display: block !important;
+    /* Cambiato da flex a block per sicurezza su mobile */
+    width: 100% !important;
+    margin-top: 1rem !important;
+    /* Margine fisso invece di auto per evitare spinte eccessive */
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    height: auto !important;
+    flex-shrink: 0 !important;
+}
+
+.card-content-right .text-meta div {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 0.75rem !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    font-size: 11px !important;
+}
+
+/* ============================================================
+   5. TEMI (MINIMALI)
+   ============================================================ */
+.card-psy {
+    background: #0a0a0a !important;
+    color: #fff !important;
+}
+
+.card-nat {
+    background: #f5f5f0 !important;
+    color: #1a2e15 !important;
+}
+
+.text-accent {
+    color: #39ff14 !important;
+}
+
+.card-nat .text-accent {
+    color: #4a6741 !important;
+}

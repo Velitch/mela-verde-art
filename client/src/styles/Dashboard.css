@@ -1,0 +1,192 @@
+/* Dashboard.css */
+
+.dashboard-container {
+    --mv-yellow: #FFFF00;
+    --mv-black: #000000;
+    --mv-dark: #121212;
+    /* Grigio scuro più visibile del nero puro */
+    --mv-input-bg: #1A1A1A;
+    /* Grigio ancora più chiaro per il contrasto interno */
+    --mv-border: rgba(255, 255, 255, 0.15);
+}
+
+/* Input Styles */
+.mv-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.mv-label {
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    margin-bottom: 0.6rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+
+.mv-input {
+    width: 100%;
+    background: var(--mv-input-bg);
+    /* Bordo giallo opaco di base (30% di opacità) */
+    border: 1px solid rgba(255, 255, 0, 0.3);
+    padding: 1.1rem;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+}
+
+.mv-input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hover: il bordo inizia a illuminarsi */
+.mv-input:hover {
+    border-color: rgba(255, 255, 0, 0.6);
+}
+
+/* Focus: Giallo pieno e vibrante */
+.mv-input:focus {
+    background: #1e1e1e;
+    border-color: var(--mv-yellow);
+    /* Effetto neon soffuso */
+    box-shadow: 0 0 12px rgba(255, 255, 0, 0.15);
+}
+
+/* Image Upload Area con bordi giallo opaco */
+.upload-zone {
+    border: 2px dashed rgba(255, 255, 0, 0.3);
+    background: var(--mv-input-bg);
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.upload-zone:hover {
+    border-color: var(--mv-yellow);
+    background: rgba(255, 255, 0, 0.05);
+    border-style: solid;
+    /* Il tratteggio diventa linea continua al passaggio */
+}
+
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--mv-yellow);
+    box-shadow: 0 0 15px var(--mv-yellow);
+    transition: width 0.4s ease;
+}
+
+
+.preview-img {
+    max-height: 350px;
+    width: 100%;
+    object-fit: contain;
+    /* Evita tagli strani alle locandine */
+    margin-top: 1rem;
+    border: 1px solid var(--mv-yellow);
+    background: black;
+}
+
+/* Buttons */
+/* Dashboard.css - Fix Pulsante Submit */
+
+.btn-submit {
+    /* Sempre Giallo di base */
+    background: var(--mv-yellow) !important;
+    color: black !important;
+    font-weight: 950;
+    text-transform: uppercase;
+    font-style: italic;
+    padding: 1.3rem;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.15em;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: block;
+    margin-top: 2rem;
+    box-shadow: 0 4px 15px rgba(255, 255, 0, 0.1);
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 255, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+/* Stato Disabilitato: Giallo ma più cupo/opaco, non nero! */
+.btn-submit:disabled {
+    background: #888800 !important;
+    /* Un giallo senape scuro */
+    color: rgba(0, 0, 0, 0.5) !important;
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Effetto durante il caricamento */
+.btn-submit .animate-pulse {
+    letter-spacing: 0.3em;
+}
+
+/* Scrollbar personalizzata per la dashboard */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #FFFF00;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--mv-yellow);
+}
+
+.mv-label {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 10px !important;
+    letter-spacing: 0.25em !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    font-style: italic !important;
+    /* Assicuriamoci che non si comporti come un blocco */
+    display: table-cell !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Fix per evitare che le celle si stringano troppo */
+td {
+    vertical-align: middle;
+}
+
+/* Stile scrollbar per la tabella su mobile */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #FFFF00;
+}

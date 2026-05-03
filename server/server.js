@@ -10,53 +10,58 @@ import galleryRoutes from './routes/gallery.js';
 
 dotenv.config();
 
-// --- LOGICA PERCORSI ASSOLUTI ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Definiamo il percorso verso la cartella assets del client
+// Su Render, la cartella assets potrebbe non essere accessibile se fuori dalla root del server.
+// Assicurati che le immagini siano caricate su GitHub nella cartella client/public/assets
 const assetsPath = path.resolve(__dirname, '../client/public/assets');
 
 const app = express();
 
-// --- CONFIGURAZIONE CORS ---
+// --- CONFIGURAZIONE CORS DINAMICA ---
+const allowedOrigins = [
+    'https://mela-verde-art.vercel.app',
+    'http://localhost:5173'
+];
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // Permette richieste senza origin (come mobile apps o curl) o da origini autorizzate
+        if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Payload limits per video pesanti
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 // --- DEBUG LOG ALL'AVVIO ---
 console.log('--- MELAVERDE SYSTEM CHECK ---');
 console.log('📂 Root Server Dir:', __dirname);
-console.log('🖼️  Gallery Assets:', path.join(assetsPath, 'gallery'));
+console.log('🖼️  Assets Path:', assetsPath);
 console.log('✅ Assets Dir Exists?', fs.existsSync(assetsPath) ? 'YES' : 'NO');
 console.log('------------------------------');
 
-// --- OPZIONI PER FILE STATICI (Sostituisce il define che crashava) ---
+// --- OPZIONI PER FILE STATICI ---
 const staticOptions = {
     setHeaders: (res, filePath) => {
-        // Sblocca caricamento cross-origin
         res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-        res.set('Access-Control-Allow-Origin', 'http://localhost:5173');
+        // Rimosso il localhost fisso qui, ora usa il valore dinamico
+        res.set('Access-Control-Allow-Origin', '*');
         res.set('Cache-Control', 'public, max-age=3600');
 
-        // Forza MIME types per Linux se l'estensione corrisponde
-        if (filePath.endsWith('.webm')) {
-            res.set('Content-Type', 'video/webm');
-        }
-        if (filePath.endsWith('.webp')) {
-            res.set('Content-Type', 'image/webp');
-        }
+        if (filePath.endsWith('.webm')) res.set('Content-Type', 'video/webm');
+        if (filePath.endsWith('.webp')) res.set('Content-Type', 'image/webp');
     }
 };
 
-// Servizio file statici con le nuove opzioni
 app.use('/assets', express.static(assetsPath, staticOptions));
 
 // --- LOGGING RICHIESTE ---
@@ -82,18 +87,18 @@ app.use((req, res) => {
 // Gestione Errori Globale
 app.use((err, req, res, next) => {
     console.error('🔥 SERVER_CRITICAL_ERROR:', err.stack);
-    res.status(500).json({ error: 'Internal system error during media processing' });
+    res.status(500).json({ error: 'Internal system error' });
 });
 
-const PORT = process.env.PORT || 3001;
+// IMPORTANTE: Render assegna la porta automaticamente tramite process.env.PORT
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`
     ===========================================
     🍏 MELAVERDE BACKEND ONLINE
-    📡 PORT: ${PORT} | http://localhost:${PORT}
-    🎥 VIDEO SUPPORT: WebM (FFmpeg)
-    📸 IMAGE SUPPORT: WebP (ImageMagick)
+    📡 PORT: ${PORT}
+    🏠 ORIGINS: ${allowedOrigins.join(', ')}
     ===========================================
     `);
 });

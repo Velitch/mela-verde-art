@@ -5,6 +5,9 @@ import { useMood } from '../context/MoodContext';
 import { X, Scan, Expand, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
+// Recuperiamo l'URL del backend dalle variabili d'ambiente (Vercel)
+const API_URL = import.meta.env.VITE_API_URL;
+
 const generateRandomStyle = (index) => {
     const rotate = (Math.random() * 6 - 3).toFixed(1);
     const marginTop = index % 2 === 0 ? '0px' : `${Math.floor(Math.random() * 80) + 20}px`;
@@ -21,9 +24,6 @@ const Gallery = () => {
 
     const touchStart = useRef(null);
 
-    // Usiamo solo getActiveColor per mantenere l'estetica coerente,
-    // ma NON importiamo le funzioni di modifica (setVibe, setIsNeon)
-    // per garantire che la gallery non cambi il mood di tutto il sito.
     const { getActiveColor } = useMood();
     const globalAccent = getActiveColor();
 
@@ -72,21 +72,22 @@ const Gallery = () => {
     useEffect(() => {
         const fetchGallery = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/api/gallery');
+                // CORREZIONE: Usiamo API_URL dinamico invece di localhost
+                const res = await axios.get(`${API_URL}/gallery`);
                 const photosWithStyle = res.data.map((p, i) => ({ ...p, randomStyle: generateRandomStyle(i) }));
                 setAllPhotos(photosWithStyle);
                 setFilteredPhotos(photosWithStyle);
                 setLoading(false);
-            } catch (err) { console.error("Gallery Error:", err); setLoading(false); }
+            } catch (err) {
+                console.error("Gallery Error:", err);
+                setLoading(false);
+            }
         };
         fetchGallery();
     }, []);
 
     const applyFilter = (vibeId) => {
-        // AGGIORNA SOLO IL FILTRO LOCALE
         setActiveFilter(vibeId);
-
-        // FILTRA LE FOTO SENZA CHIAMARE IL MOODCONTEXT
         if (vibeId === 'all') {
             setFilteredPhotos(allPhotos);
         } else {
@@ -94,7 +95,6 @@ const Gallery = () => {
         }
     };
 
-    // Colori specifici per i tasti della gallery (indipendenti dal resto del sito)
     const getLocalVibeColor = (vibe) => {
         const colors = { psy: '#39ff14', bdsm: '#ff0000', natural: '#FFFF00' };
         return colors[vibe] || globalAccent;

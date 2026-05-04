@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion'; // Assicurati che sia importato se lo usi nel Modal
 import { Trash2, Edit3, Eye, EyeOff, X, Save, Image as ImageIcon } from 'lucide-react';
 
-const API_BASE = 'http://localhost:3001';
+// ✅ CORRETTO: Recuperiamo l'indirizzo dinamico da Render/Vercel
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const EventList = () => {
     const [events, setEvents] = useState([]);
@@ -16,7 +18,8 @@ const EventList = () => {
     // Fetch iniziale
     const fetchEvents = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/api/events`);
+            // Se VITE_API_URL finisce già con /api, togliamo la ripetizione
+            const res = await axios.get(`${API_BASE}/events`);
             setEvents(res.data);
         } catch (err) {
             console.error("Errore caricamento eventi:", err);
@@ -39,7 +42,10 @@ const EventList = () => {
             location: event.location || '',
             name: event.name || ''
         });
-        setPreview(`${API_BASE}${event.image_url}`);
+
+        // Gestione immagine preview nel modal: se è un nuovo file usa l'URL blob, 
+        // altrimenti usa il percorso del server Render
+        setPreview(event.image_url);
         setIsEditModalOpen(true);
     };
 
@@ -54,14 +60,13 @@ const EventList = () => {
     const createEventFormData = (eventData) => {
         const formData = new FormData();
         Object.keys(eventData).forEach(key => {
-            if (key === 'ig_link') return;
+            if (key === 'ig_link' || key === 'image_url') return; // Non inviamo il vecchio URL
             const value = eventData[key];
             formData.append(key, value === null ? '' : value);
         });
         return formData;
     };
 
-    // UPDATE: Aggiornamento locale per evitare il flash del loading
     const handleUpdate = async (e) => {
         e.preventDefault();
         const formData = createEventFormData(editingEvent);
@@ -69,16 +74,14 @@ const EventList = () => {
 
         try {
             const token = localStorage.getItem('adminToken');
-            const res = await axios.put(`${API_BASE}/api/events/${editingEvent.id}`, formData, {
+            const res = await axios.put(`${API_BASE}/events/${editingEvent.id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
 
-            // Aggiorna lo stato locale sostituendo solo l'evento modificato
             setEvents(prev => prev.map(ev => ev.id === editingEvent.id ? res.data : ev));
-
             setIsEditModalOpen(false);
             setNewFile(null);
             alert("Sincronizzazione completata.");
@@ -88,23 +91,22 @@ const EventList = () => {
         }
     };
 
-    // STATUS: Aggiornamento ottimistico
     const toggleStatus = async (event) => {
         const newStatus = event.eventStatus === 'active' ? 'hidden' : 'active';
 
-        // 1. Cambia subito l'interfaccia
         setEvents(prev => prev.map(ev =>
             ev.id === event.id ? { ...ev, eventStatus: newStatus } : ev
         ));
 
         try {
             const token = localStorage.getItem('adminToken');
+            // Nota: inviamo solo lo stato per semplicità se il backend lo permette, 
+            // altrimenti usiamo createEventFormData
             const formData = createEventFormData({ ...event, eventStatus: newStatus });
-            await axios.put(`${API_BASE}/api/events/${event.id}`, formData, {
+            await axios.put(`${API_BASE}/events/${event.id}`, formData, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
         } catch (err) {
-            // 2. Se fallisce, ripristina lo stato precedente
             console.error(err);
             setEvents(prev => prev.map(ev =>
                 ev.id === event.id ? event : ev
@@ -117,7 +119,7 @@ const EventList = () => {
 
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.delete(`${API_BASE}/api/events/${id}`, {
+            await axios.delete(`${API_BASE}/events/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setEvents(prev => prev.filter(e => e.id !== id));
@@ -140,7 +142,7 @@ const EventList = () => {
                     <div key={event.id} className="bg-white/5 border border-white/10 p-4 rounded-lg flex flex-col gap-4">
                         <div className="flex items-center gap-4">
                             <img
-                                src={`${API_BASE}${event.image_url}`}
+                                src={event.image_url}
                                 alt=""
                                 className="w-16 h-16 object-cover border border-white/10"
                             />
@@ -183,7 +185,7 @@ const EventList = () => {
                                 <td className="p-4">
                                     <div className="relative w-12 h-12 overflow-hidden border border-white/10">
                                         <img
-                                            src={`${API_BASE}${event.image_url}`}
+                                            src={event.image_url}
                                             crossOrigin="anonymous"
                                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
                                         />
@@ -218,11 +220,7 @@ const EventList = () => {
             {/* MODAL EDIT */}
             {isEditModalOpen && editingEvent && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 bg-black/90 backdrop-blur-md">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-[#0A0A0A] border-y sm:border border-white/10 w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto p-6 sm:p-10 custom-scrollbar"
-                    >
+                    <div className="bg-[#0A0A0A] border-y sm:border border-white/10 w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto p-6 sm:p-10 custom-scrollbar">
                         <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                             <h3 className="text-[#FFFF00] font-black uppercase italic text-xl tracking-tighter">System_Edit_Update</h3>
                             <button onClick={() => setIsEditModalOpen(false)} className="text-white/30 hover:text-white"><X size={28} /></button>
@@ -296,7 +294,7 @@ const EventList = () => {
                                 </button>
                             </div>
                         </form>
-                    </motion.div>
+                    </div>
                 </div>
             )}
         </div>

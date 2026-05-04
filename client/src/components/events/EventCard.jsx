@@ -4,6 +4,9 @@ import { ArrowUpRight, MapPin, Calendar, Zap, Leaf, Skull } from 'lucide-react';
 import axios from 'axios';
 import '../../styles/EventThemes.css';
 
+// ✅ RECUPERO URL DINAMICO
+const API_URL = import.meta.env.VITE_API_URL;
+
 const EventCard = ({ event, onVisible, timeStatus }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { margin: "-45% 0px -45% 0px" });
@@ -16,13 +19,11 @@ const EventCard = ({ event, onVisible, timeStatus }) => {
 
     if (!event) return null;
 
-    // Logica Vibe
     const isPsy = event.vibe === 'psy';
     const isNat = event.vibe === 'natural';
     const isBdsm = event.vibe === 'bdsm';
     const isPast = timeStatus === 'past';
 
-    // Helper per formattare le date
     const formatDate = (dateStr) => {
         if (!dateStr) return null;
         return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' });
@@ -33,13 +34,13 @@ const EventCard = ({ event, onVisible, timeStatus }) => {
 
     const handleTrackClick = async () => {
         try {
-            await axios.post(`http://localhost:3001/api/events/${event.id}/view`);
+            // ✅ CORRETTO: Invia il ping al server Render
+            await axios.post(`${API_URL}/events/${event.id}/view`);
         } catch (err) {
             console.warn("Analytics ping failed");
         }
     };
 
-    // Determina la classe del tema e l'overlay
     const getThemeClass = () => {
         if (isPsy) return 'card-psy';
         if (isNat) return 'card-nat';
@@ -66,7 +67,6 @@ const EventCard = ({ event, onVisible, timeStatus }) => {
             viewport={{ once: true }}
             className={`event-card-main ${getThemeClass()} ${isPast ? 'event-past' : ''}`}
         >
-            {/* IMMAGINE CON TAG GRAFICO */}
             <div className="card-img-container relative overflow-hidden">
                 <img
                     src={event.image_url}
@@ -74,7 +74,6 @@ const EventCard = ({ event, onVisible, timeStatus }) => {
                     className={isPast ? 'grayscale' : ''}
                 />
 
-                {/* TAG GRAFICO DINAMICO */}
                 <div className={`vibe-image-tag ${isPsy ? 'bg-green-500' : isBdsm ? 'bg-red-600' : 'bg-[#FFFF00]'}`}>
                     {isPsy && <Zap size={10} fill="currentColor" />}
                     {isNat && <Leaf size={10} fill="currentColor" />}
@@ -85,7 +84,6 @@ const EventCard = ({ event, onVisible, timeStatus }) => {
                 <div className={`img-overlay ${getOverlayClass()}`} />
             </div>
 
-            {/* CONTENUTO LATO DESTRO */}
             <div className="card-content-right">
                 <div className="card-text-content">
                     <div className="card-header-meta">

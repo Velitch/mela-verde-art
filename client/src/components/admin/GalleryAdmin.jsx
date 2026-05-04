@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Trash2, Loader2, Filter, UploadCloud, X, Download, Play, Film } from 'lucide-react';
+import { Trash2, Loader2, Filter, UploadCloud, X, Download, Play, Film, ImageIcon } from 'lucide-react';
+
+// ✅ RECUPERO URL DINAMICO
+const API_URL = import.meta.env.VITE_API_URL;
 
 const GalleryAdmin = () => {
     // --- STATE UPLOAD ---
@@ -21,7 +24,8 @@ const GalleryAdmin = () => {
     const fetchPhotos = async () => {
         setFetching(true);
         try {
-            const res = await axios.get('http://localhost:3001/api/gallery');
+            // ✅ Endpoint corretto
+            const res = await axios.get(`${API_URL}/gallery`);
             setPhotos(res.data);
         } catch (err) {
             console.error("Errore fetch gallery:", err);
@@ -30,7 +34,7 @@ const GalleryAdmin = () => {
         }
     };
 
-    // SEO: Generatore di Alt Text per il database (Rileva se Video o Immagine)
+    // SEO Alt Text
     const generateAltText = (vibe, isVideo) => {
         const typeLabel = isVideo ? "Video Performance" : "Sperimentazione Visuale";
         const base = `Melaverde Bodypaint Milano - ${typeLabel}`;
@@ -55,27 +59,22 @@ const GalleryAdmin = () => {
         setUploading(true);
         const formData = new FormData();
 
-        // LOGICA DI RINOMINA E RILEVAMENTO TIPO
         selectedFiles.forEach((file, index) => {
             const extension = file.name.split('.').pop().toLowerCase();
             const timestamp = Date.now();
-            const isVideo = ['mp4', 'mov', 'avi', 'webm'].includes(extension);
-
-            // Nome file temporaneo che il backend userà come base
             const customFileName = `${uploadVibe}_melaverde_bodypaint_${timestamp}_${index}.${extension}`;
-
             const renamedFile = new File([file], customFileName, { type: file.type });
             formData.append('images', renamedFile);
         });
 
         formData.append('vibe', uploadVibe);
-        // Generiamo l'alt text basandoci sul primo file per semplicità di bulk upload
         const hasVideo = selectedFiles.some(f => f.type.includes('video'));
         formData.append('alt_text', generateAltText(uploadVibe, hasVideo));
 
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.post('http://localhost:3001/api/gallery/upload', formData, {
+            // ✅ Endpoint UPLOAD corretto
+            await axios.post(`${API_URL}/gallery/upload`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -115,7 +114,8 @@ const GalleryAdmin = () => {
         if (!window.confirm("PROCEDERE CON L'ELIMINAZIONE DEFINITIVA?")) return;
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.delete(`http://localhost:3001/api/gallery/${id}`, {
+            // ✅ Endpoint DELETE corretto
+            await axios.delete(`${API_URL}/gallery/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setPhotos(photos.filter(p => p.id !== id));
@@ -128,7 +128,7 @@ const GalleryAdmin = () => {
 
     return (
         <div className="space-y-12">
-            {/* SEZIONE UPLOAD IBRIDO */}
+            {/* SEZIONE UPLOAD */}
             <div className="p-8 bg-[#0A0A0A] border border-white/5">
                 <div className="flex items-center gap-3 mb-8">
                     <Film className="text-[#FFFF00]" size={24} />
@@ -140,7 +140,7 @@ const GalleryAdmin = () => {
                         <div className="mv-input-group">
                             <label className="text-[10px] font-black text-white/30 uppercase mb-2 block">Vibe_Protocol</label>
                             <select
-                                className="w-full bg-main border border-white/10 p-4 text-[#FFFF00] font-black italic outline-none focus:border-[#FFFF00]"
+                                className="w-full bg-black border border-white/10 p-4 text-[#FFFF00] font-black italic outline-none focus:border-[#FFFF00]"
                                 value={uploadVibe}
                                 onChange={e => setUploadVibe(e.target.value)}
                             >
@@ -160,18 +160,6 @@ const GalleryAdmin = () => {
                         </div>
                     </div>
 
-                    {selectedFiles.length > 0 && (
-                        <div className="flex flex-wrap gap-2 p-3 bg-white/5 border border-white/5">
-                            {selectedFiles.map((f, i) => (
-                                <div key={i} className="flex items-center gap-2 px-2 py-1 bg-main text-[8px] font-mono text-white/60 border border-white/10">
-                                    {f.type.includes('video') ? <Film size={10} className="text-[#FFFF00]" /> : <ImageIcon size={10} />}
-                                    {f.name.substring(0, 15)}...
-                                    <X size={10} className="cursor-pointer hover:text-red-500" onClick={() => setSelectedFiles(selectedFiles.filter((_, idx) => idx !== i))} />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
                     <button className="w-full py-4 bg-[#FFFF00] text-black font-black uppercase italic tracking-widest flex items-center justify-center gap-3 hover:bg-white transition-all disabled:opacity-30" disabled={uploading || selectedFiles.length === 0}>
                         {uploading ? <Loader2 className="animate-spin" /> : 'CONVERT_AND_PUSH_TO_ARCHIVE'}
                     </button>
@@ -186,7 +174,7 @@ const GalleryAdmin = () => {
                         <Filter className="text-white/20" />
                         <h2 className="text-white font-black uppercase italic text-2xl tracking-tighter">Media_Database_Manager</h2>
                     </div>
-                    <div className="flex bg-main border border-white/10 p-1">
+                    <div className="flex bg-black border border-white/10 p-1">
                         {['all', 'natural', 'psy', 'bdsm'].map(v => (
                             <button key={v} onClick={() => setFilterVibe(v)} className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest transition-all ${filterVibe === v ? 'bg-[#FFFF00] text-black' : 'text-white/40 hover:text-white'}`}>
                                 {v}
@@ -200,20 +188,16 @@ const GalleryAdmin = () => {
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {filteredPhotos.map((photo) => (
-                            <div key={photo.id} className="group relative aspect-square bg-main border border-white/5 overflow-hidden">
-
-                                {/* PREVIEW IBRIDA */}
+                            <div key={photo.id} className="group relative aspect-square bg-black border border-white/5 overflow-hidden">
                                 {photo.type === 'video' ? (
                                     <video src={photo.image_url} className="w-full h-full object-cover opacity-50" muted loop onMouseEnter={e => e.target.play()} onMouseLeave={e => e.target.pause()} />
                                 ) : (
                                     <img src={photo.image_url} alt={photo.alt_text} className="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-all duration-500" />
                                 )}
-
                                 <div className="absolute top-2 right-2 z-10">
                                     {photo.type === 'video' && <Play size={14} className="text-[#FFFF00] fill-current" />}
                                 </div>
-
-                                <div className="absolute inset-0 bg-main/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 z-20">
+                                <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 z-20">
                                     <span className={`text-[8px] font-black px-1.5 py-0.5 uppercase self-start ${photo.vibe === 'psy' ? 'bg-[#39ff14] text-black' : photo.vibe === 'bdsm' ? 'bg-[#ff0000] text-white' : 'bg-[#FFFF00] text-black'}`}>
                                         {photo.vibe} [{photo.type.toUpperCase()}]
                                     </span>

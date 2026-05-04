@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Upload, CheckCircle2, AlertCircle, X, Image as ImageIcon, FileEdit, Save } from 'lucide-react';
 import '../../styles/Dashboard.css';
 
+// Recuperiamo l'URL dal file .env di Vercel
+const API_URL = import.meta.env.VITE_API_URL;
+
 const EventForm = () => {
     const initialState = {
         name: '',
@@ -75,7 +78,9 @@ const EventForm = () => {
 
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.post('http://localhost:3001/api/events', data, {
+
+            // ✅ CORRETTO: Usiamo API_URL dinamico
+            await axios.post(`${API_URL}/events`, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
@@ -89,6 +94,7 @@ const EventForm = () => {
             setStatus({ type: 'success', msg: 'Evento pubblicato!' });
             resetForm();
         } catch (err) {
+            console.error("Upload Error:", err);
             const errorMsg = err.response?.data?.message || 'Errore durante il caricamento';
             setStatus({ type: 'error', msg: errorMsg });
         } finally {

@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart3, TrendingUp, Calendar, Eye } from 'lucide-react';
 
+// ✅ RECUPERO URL DINAMICO
+const API_URL = import.meta.env.VITE_API_URL;
+
 const StatsView = () => {
     const [stats, setStats] = useState({ totalEvents: 0, totalViews: 0, upcomingEvents: 0 });
 
     useEffect(() => {
         const fetchStats = async () => {
-            const token = localStorage.getItem('adminToken');
-            const res = await axios.get('http://localhost:3001/api/events/admin/stats', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setStats(res.data);
+            try {
+                const token = localStorage.getItem('adminToken');
+                // ✅ Endpoint corretto e gestione errori
+                const res = await axios.get(`${API_URL}/events/admin/stats`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setStats(res.data);
+            } catch (err) {
+                console.error("Errore recupero statistiche:", err);
+            }
         };
         fetchStats();
     }, []);
@@ -24,10 +32,11 @@ const StatsView = () => {
                 <StatCard title="Show in Arrivo" value={stats.upcomingEvents} icon={<TrendingUp />} color="#FFFF00" />
             </div>
 
-            {/* Qui potremmo aggiungere una lista degli eventi più visti */}
             <div className="bg-white/5 border border-white/5 p-8">
                 <h3 className="text-[#FFFF00] font-black uppercase italic mb-6">Performance_System</h3>
-                <p className="text-white/30 text-xs">Il tracciamento delle visualizzazioni è attivo. I dati vengono aggiornati in tempo reale ogni volta che un utente visualizza un evento sul sito pubblico.</p>
+                <p className="text-white/30 text-xs tracking-wider uppercase leading-relaxed">
+                    Il tracciamento delle visualizzazioni è attivo. I dati vengono aggiornati in tempo reale ogni volta che un utente visualizza un evento sul sito pubblico.
+                </p>
             </div>
         </div>
     );

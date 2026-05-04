@@ -40,7 +40,6 @@ const Home = () => {
 
     return (
         <>
-            {/* SEO DINAMICO - Posizionato correttamente dentro il return */}
             <Helmet>
                 <title>Melaverde | Bodypainting & Visual Art Roma</title>
                 <meta name="description" content="Esplora l'arte di Melaverde a Roma. Bodypainting, performance visive e metamorfosi del corpo tra estetica naturale e visioni neon." />
@@ -65,8 +64,6 @@ const Home = () => {
                             <h1 className="text-[14vw] md:text-[15vw] font-black italic tracking-tighter leading-none uppercase whitespace-nowrap">
                                 Mela<span style={{ color: activeColor }} className="transition-colors duration-1000">verde</span>
                             </h1>
-                            <p className="mt-6 text-[11px] md:text-sm font-medium tracking-[0.2em] uppercase text-zinc-300">
-                            </p>
                         </motion.div>
                     </div>
                 </section>
@@ -93,7 +90,8 @@ const Home = () => {
                                 <div className="w-full md:w-2/5 aspect-square relative overflow-hidden">
                                     <img
                                         src={nextEvent?.image_url}
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
+                                            /* MODIFICA: md:grayscale forza il bianco e nero solo su PC. Su mobile è colorata. */
+                                            className="w-full h-full object-cover grayscale-0 md:grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
                                         alt={nextEvent?.name}
                                     />
                                 </div>
@@ -160,7 +158,8 @@ const Home = () => {
                                     >
                                         <img
                                             src={item.image_url}
-                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                                            /* MODIFICA: md:grayscale qui permette di vedere i colori su mobile senza hover */
+                                            className="w-full h-full object-cover grayscale-0 md:grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                                             alt="Melaverde visual preview"
                                         />
                                         <div className="absolute inset-0 bg-main/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

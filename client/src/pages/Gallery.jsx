@@ -72,7 +72,6 @@ const Gallery = () => {
     useEffect(() => {
         const fetchGallery = async () => {
             try {
-                // CORREZIONE: Usiamo API_URL dinamico invece di localhost
                 const res = await axios.get(`${API_URL}/gallery`);
                 const photosWithStyle = res.data.map((p, i) => ({ ...p, randomStyle: generateRandomStyle(i) }));
                 setAllPhotos(photosWithStyle);
@@ -165,7 +164,8 @@ const Gallery = () => {
                                                         playsInline
                                                         onMouseEnter={e => e.target.play()}
                                                         onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
-                                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out"
+                                                        /* MODIFICA: Colorato su mobile, B&N su desktop con hover */
+                                                        className="w-full h-full object-cover grayscale-0 md:grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out"
                                                     />
                                                     <div className="absolute top-3 right-3 p-1.5 bg-main/60 backdrop-blur-md border border-white/10 group-hover:border-white/50 transition-colors">
                                                         <Play size={12} className="text-white" fill="currentColor" />
@@ -176,7 +176,8 @@ const Gallery = () => {
                                                     src={photo.image_url}
                                                     alt={getSeoAlt(photo)}
                                                     loading="lazy"
-                                                    className="w-full h-auto object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out"
+                                                        /* MODIFICA: Colorato su mobile, B&N su desktop con hover */
+                                                        className="w-full h-auto object-cover grayscale-0 md:grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out"
                                                 />
                                             )}
                                             <Expand size={16} className="absolute bottom-3 right-3 text-white/0 group-hover:text-white/50 transition-colors" />

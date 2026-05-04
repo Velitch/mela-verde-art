@@ -1,12 +1,9 @@
 import bcrypt from 'bcrypt';
 
-const passwordChiaro = 'MelaverdeTVB';
+const passwordChiara = 'Mamitiamo23'; // Scrivi qui la password che vuoi usare
+const saltRounds = 10;
 
-bcrypt.hash(passwordChiaro, 10, (err, hash) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    console.log("Copia questo hash nel DB:");
+bcrypt.hash(passwordChiara, saltRounds, (err, hash) => {
+    console.log("Copia questo hash nel database:");
     console.log(hash);
 });
